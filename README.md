@@ -16,7 +16,7 @@ To address the complexity of identifying a small, fast-moving object, our team w
 * **Model Training:** Using the labeled data, we will train our PyTorch model to optimize for Intersection over Union (IoU), ensuring the bounding boxes are as precise as possible.
 
 ### Repository Structure
-* **Special Note*:** The baseball.weights.pth file is located in the Releases section of this repository (the file was too big to upload as its own file).
+* **Special Note:** The baseball.weights.pth file is located in the Releases section of this repository (the file was too big to upload as its own file).
 
 ## 3. Data Request and Justification
 To improve the robustness of our model, we request additional footage captured under the following conditions:
