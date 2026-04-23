@@ -15,6 +15,9 @@ To address the complexity of identifying a small, fast-moving object, our team w
 * **Pre-processing & Motion Isolation:** To combat "noisy" backgrounds, we will implement Frame Differencing. This technique allows us to subtract static background elements and highlight only the pixels in motion, significantly reducing the "search area" for our mode.
 * **Model Training:** Using the labeled data, we will train our PyTorch model to optimize for Intersection over Union (IoU), ensuring the bounding boxes are as precise as possible.
 
+### Repository Structure
+* **Special Note*:** The baseball.weights.pth file is located in the Releases section of this repository (the file was too big to upload as its own file).
+
 ## 3. Data Request and Justification
 To improve the robustness of our model, we request additional footage captured under the following conditions:
 
