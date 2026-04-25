@@ -7,7 +7,7 @@
 ###  Quick Start: Live Demo of our Project
 **Note to Instructor:** To replicate our analysis from start to finish without local environment setup, click the button below to run our project directly in Google Colab. This script automatically clones the repository, installs dependencies, and runs the tracking evaluation.
 
-Click this: Semester_Project_Run_Through.ipynb
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Sadie3958/econ8310-semester_project/blob/main/Semester_Project_Run_Through.ipynb)
 
 ---
 
