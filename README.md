@@ -1,11 +1,11 @@
 # Semester Project Proposal: Baseball Identification & Tracking
 **Course:** ECON 8310 - Business Forecasting
-**Team Members:** Sadie Lamplot, Adam Nutt, Alyssa Miller
+**Team Members:** Adam Nutt, Alyssa Miller, Sadie Lamplot
 
 ---
 
-###  Quick Start: Live Demo of our Project
-**Note to Instructor:** To replicate our analysis from start to finish without local environment setup, click the button below to run our project directly in Google Colab. This script automatically clones the repository, installs dependencies, and runs the tracking evaluation.
+###  Quick Start: Project Replication in Google Colab
+**Note to Dr. White:** To view our analysis and run the model evaluation in a live environment, click the badge below. This notebook automatically clones the repository, installs all dependencies from requirements.txt, and executes the main.py script.
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Sadie3958/econ8310-semester_project/blob/main/Semester_Project_Run_Through.ipynb)
 
