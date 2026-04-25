@@ -4,6 +4,13 @@
 
 ---
 
+###  Quick Start: Live Demo of our Project
+**Note to Instructor:** To replicate our analysis from start to finish without local environment setup, click the button below to run our project directly in Google Colab. This script automatically clones the repository, installs dependencies, and runs the tracking evaluation.
+
+Click this: Semester_Project_Run_Through.ipynb
+
+---
+
 ## 1. Problem Statement
 Our team has been tasked to develop a computer vision solution capable of identifying and tracking baseballs within training videos. The primary objective is to produce highly accurate, tight bounding boxes around the moving baseball in every frame to provide the coach with actionable data for player development.
 
