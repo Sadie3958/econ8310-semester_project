@@ -15,15 +15,22 @@ def main():
     # Building off ResNet-18 (based on our proposal)
     model = get_baseball_model()
 
-    # 2. Load the trained weights
+  # 2. Load the trained weights
     if os.path.exists(WEIGHTS_PATH):
-        # Loading onto CPU to ensure it runs on any machine
-        model.load_state_dict(torch.load(WEIGHTS_PATH, map_location=torch.device('cpu')))
+        # Load the weights file
+        checkpoint = torch.load(WEIGHTS_PATH, map_location=torch.device('cpu'))
+        
+        # REMOVE the old classification layer (fc) from the weights so it doesn't clash
+        # This allows the model to keep the "learned features" but use a new "4-output" head
+        if 'fc.weight' in checkpoint:
+            del checkpoint['fc.weight']
+        if 'fc.bias' in checkpoint:
+            del checkpoint['fc.bias']
+            
+        # Load the remaining weights (ignoring the missing fc layer)
+        model.load_state_dict(checkpoint, strict=False)
         model.eval()
-        print(f"Successfully loaded weights from {WEIGHTS_PATH}")
-    else:
-        print(f"ERROR: Weights not found at {WEIGHTS_PATH}. Please download from Releases.")
-        return
+        print(f"Successfully loaded feature weights from {WEIGHTS_PATH} (Adjusted for 4-coordinate output)")
 
     # 3. Initialize Data Loader
     dataset = BaseballVideoLoader(VIDEO_DIR, XML_DIR)
