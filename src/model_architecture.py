@@ -1,13 +1,11 @@
-import torch
 import torch.nn as nn
 from torchvision import models
 
 def get_baseball_model():
-    # Load the standard ResNet-18
-    model = models.resnet18(weights=None) 
+    # Using ResNet-18 as foundational architecture
+    model = models.resnet18(weights=None)
     
-    # Simple linear head to match the original 4-coordinate output
-    num_ftrs = model.fc.in_features
-    model.fc = nn.Linear(num_ftrs, 4)
-    
+    # Adjust for Bounding Box Regression (4 coordinates: x, y, w, h)
+    # Instead of 2 classes, we output 4 continuous values
+    model.fc = nn.Linear(model.fc.in_features, 4)
     return model
