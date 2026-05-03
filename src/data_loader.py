@@ -24,17 +24,19 @@ class BaseballVideoLoader(Dataset):
         if not success or not os.path.exists(xml_path):
             return None
 
-        # Standard XML parsing that successfully gave us the 0.009 score
         tree = ET.parse(xml_path)
         root = tree.getroot()
-        bndbox = root.find('.//bndbox')
         
+        # SAFETY CHECK: Find the bounding box
+        bndbox = root.find('.//bndbox')
+        if bndbox is None:
+            return None # Return None so main.py can skip this file
+
         x1 = float(bndbox.find('xmin').text)
         y1 = float(bndbox.find('ymin').text)
         x2 = float(bndbox.find('xmax').text)
         y2 = float(bndbox.find('ymax').text)
 
-        # Image processing back to basics
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         frame = cv2.resize(frame, (224, 224))
         frame = frame.transpose((2, 0, 1))
