@@ -5,7 +5,7 @@ import os
 import xml.etree.ElementTree as ET
 
 class BaseballVideoLoader(Dataset):
-    def __init__(self, video_dir, xml_dir, transform=None):
+    def __init__(self, video_dir, xml_dir):
         self.video_dir = video_dir
         self.xml_dir = xml_dir
         self.video_files = sorted([f for f in os.listdir(video_dir) if f.endswith(('.mp4', '.mov'))])
@@ -24,31 +24,17 @@ class BaseballVideoLoader(Dataset):
         if not success or not os.path.exists(xml_path):
             return None
 
-        # Parse XML with safety checks
+        # Standard XML parsing that successfully gave us the 0.009 score
         tree = ET.parse(xml_path)
         root = tree.getroot()
-        
-        # Look for the first object/bndbox found in the file
         bndbox = root.find('.//bndbox')
         
-        # If no bndbox is found, search for any tag containing 'xmin' (CVAT compatibility)
-        if bndbox is None:
-            xmin_tag = root.find('.//xmin')
-            if xmin_tag is None:
-                return None # No label found in this file
-            
-            # Manual extraction if bndbox parent is missing
-            x1 = float(root.find('.//xmin').text)
-            y1 = float(root.find('.//ymin').text)
-            x2 = float(root.find('.//xmax').text)
-            y2 = float(root.find('.//ymax').text)
-        else:
-            x1 = float(bndbox.find('xmin').text)
-            y1 = float(bndbox.find('ymin').text)
-            x2 = float(bndbox.find('xmax').text)
-            y2 = float(bndbox.find('ymax').text)
+        x1 = float(bndbox.find('xmin').text)
+        y1 = float(bndbox.find('ymin').text)
+        x2 = float(bndbox.find('xmax').text)
+        y2 = float(bndbox.find('ymax').text)
 
-        # Process Image for ResNet-18
+        # Image processing back to basics
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         frame = cv2.resize(frame, (224, 224))
         frame = frame.transpose((2, 0, 1))
