@@ -10,59 +10,53 @@ WEIGHTS_PATH = './baseball_weights.pth'
 def calculate_iou_xywh(pred_box, true_box):
     px, py, pw, ph = pred_box
     tx, ty, tw, th = true_box
-
     xA = max(px, tx)
     yA = max(py, ty)
     xB = min(px + pw, tx + tw)
     yB = min(py + ph, ty + th)
-
     inter_area = max(0, xB - xA) * max(0, yB - yA)
     union_area = (pw * ph) + (tw * th) - inter_area
-    
     return inter_area / union_area if union_area > 0 else 0.0
 
 def main():
-    print("--- Starting Baseball Tracking Evaluation (Original Baseline) ---")
+    print("--- Starting Baseball Tracking Evaluation ---")
     model = get_baseball_model()
 
     if os.path.exists(WEIGHTS_PATH):
         checkpoint = torch.load(WEIGHTS_PATH, map_location='cpu')
-        
-        # Fixing the size mismatch by removing the head weights
         if 'fc.weight' in checkpoint:
             del checkpoint['fc.weight']
         if 'fc.bias' in checkpoint:
             del checkpoint['fc.bias']
-
         model.load_state_dict(checkpoint, strict=False)
         model.eval()
         print("Weights loaded successfully.")
 
     dataset = BaseballVideoLoader(VIDEO_DIR, XML_DIR)
     
-    # Using the first item that gave us the score before
-    sample_data = dataset[0]
+    # NEW: Loop to find a valid labeled frame
+    sample_data = None
+    for i in range(len(dataset)):
+        sample_data = dataset[i]
+        if sample_data is not None:
+            print(f"Using valid data found at index {i}")
+            break
+
     if sample_data is None:
-        print("Data error.")
+        print("Error: No labeled data found in your annotations folder.")
         return
 
     sample_frame, target_box = sample_data
 
     with torch.no_grad():
-        # Baseline prediction without additional sigmoid layers
         prediction = model(sample_frame.unsqueeze(0))
         pred_box = prediction.squeeze().tolist()
 
-    # Original normalization logic (2160x3840)
+    # Original normalization for 4K video
     orig_w, orig_h = 2160, 3840 
     x1, y1, x2, y2 = target_box.tolist()
     
-    true_box = [
-        x1 / orig_w, 
-        y1 / orig_h, 
-        (x2 - x1) / orig_w, 
-        (y2 - y1) / orig_h
-    ]
+    true_box = [x1/orig_w, y1/orig_h, (x2-x1)/orig_w, (y2-y1)/orig_h]
 
     iou = calculate_iou_xywh(pred_box, true_box)
     print(f"IoU Accuracy: {iou:.4f}")
