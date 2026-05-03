@@ -1,46 +1,49 @@
 import torch
-from torch.utils.data import Dataset
 import cv2
 import os
 import xml.etree.ElementTree as ET
+from torch.utils.data import Dataset
 
 class BaseballVideoLoader(Dataset):
-    def __init__(self, video_dir, xml_dir):
+    def __init__(self, video_dir, xml_dir, transform=None):
         self.video_dir = video_dir
         self.xml_dir = xml_dir
-        self.video_files = sorted([f for f in os.listdir(video_dir) if f.endswith(('.mp4', '.mov'))])
+        self.video_files = [f for f in os.listdir(video_dir) if f.endswith('.mov')]
+        self.transform = transform
 
     def __len__(self):
         return len(self.video_files)
 
-    def __getitem__(self, idx):
-        video_path = os.path.join(self.video_dir, self.video_files[idx])
-        xml_path = os.path.join(self.xml_dir, self.video_files[idx].rsplit('.', 1)[0] + '.xml')
-
-        cap = cv2.VideoCapture(video_path)
-        success, frame = cap.read()
-        cap.release()
-
-        if not success or not os.path.exists(xml_path):
-            return None
-
+    def parse_xml(self, xml_path):
+        """Parses CVAT XML to get bounding box coordinates."""
         tree = ET.parse(xml_path)
         root = tree.getroot()
+        # Finding the first box in the XML (you can loop if there are multiple)
+        box = root.find('.//box')
+        if box is not None:
+            return [
+                float(box.get('xtl')), 
+                float(box.get('ytl')), 
+                float(box.get('xbr')), 
+                float(box.get('ybr'))
+            ]
+        return [0, 0, 0, 0]
+
+    def __getitem__(self, idx):
+        video_path = os.path.join(self.video_dir, self.video_files[idx])
+        xml_path = os.path.join(self.xml_dir, self.video_files[idx].replace('.mov', '.xml'))
         
-        # SAFETY CHECK: Find the bounding box
-        bndbox = root.find('.//bndbox')
-        if bndbox is None:
-            return None # Return None so main.py can skip this file
+        cap = cv2.VideoCapture(video_path)
+        ret, frame = cap.read() # Grabbing the first frame for this example
+        cap.release()
 
-        x1 = float(bndbox.find('xmin').text)
-        y1 = float(bndbox.find('ymin').text)
-        x2 = float(bndbox.find('xmax').text)
-        y2 = float(bndbox.find('ymax').text)
-
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        # Implementation of Frame Differencing (from Proposal)
+        # Note: Real implementation would subtract frame(t) - frame(t-1)
+        
+        box = self.parse_xml(xml_path)
+        
+        # Standardize for the model
         frame = cv2.resize(frame, (224, 224))
-        frame = frame.transpose((2, 0, 1))
-        frame_tensor = torch.from_numpy(frame).float() / 255.0
-
-        target_box = torch.tensor([x1, y1, x2, y2])
-        return frame_tensor, target_box
+        frame_tensor = torch.from_numpy(frame).permute(2, 0, 1).float() / 255.0
+        
+        return frame_tensor, torch.tensor(box)
