@@ -11,7 +11,7 @@
 
 ---
 
-###  Final Presentation Video is located in the Released Section under "Final Presentation."
+###  Final Presentation Video is located in the "Releases" Section under Final Presentation.
 ---
 
 ## 1. Problem Statement
