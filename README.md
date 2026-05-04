@@ -1,5 +1,6 @@
 # Semester Project Proposal: Baseball Identification & Tracking
 **Course:** ECON 8310 - Business Forecasting
+
 **Team Members:** Adam Nutt, Alyssa Miller, Sadie Lamplot
 
 ---
