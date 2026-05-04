@@ -11,6 +11,9 @@
 
 ---
 
+###  Final Presentation Video is located in the Released Section under "Final Presentation."
+---
+
 ## 1. Problem Statement
 Our team has been tasked to develop a computer vision solution capable of identifying and tracking baseballs within training videos. The primary objective is to produce highly accurate, tight bounding boxes around the moving baseball in every frame to provide the coach with actionable data for player development.
 
